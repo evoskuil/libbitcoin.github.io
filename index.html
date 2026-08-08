@@ -48,7 +48,7 @@
     --rule: #3a3c33; --rule-soft: #2e302a;
     --accent: #c85637; --heading: #ffa022;
     --yes: #00bb7f; --partial: #ffa022; --pending: #4f8dff;
-    --rejected: #ff2357; --scope: #6a7282;
+    --rejected: #ff2357; --scope: #6a7282; --wip: #c07bff;
     --mono: ui-monospace, "SF Mono", "Cascadia Mono", "Segoe UI Mono", Menlo, Consolas, monospace;
     --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
     --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
@@ -70,7 +70,7 @@
   .tag.pending { color: var(--pending); }
   .tag.rejected { color: var(--rejected); }
   .tag.scope { color: var(--scope); }
-  .tag.wip { color: #ffffff; background: var(--accent); border-color: var(--accent); margin-left: 6px; }
+  .tag.wip { color: var(--wip); }
 
   h2 { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin: 0 0 18px; padding-bottom: 8px; border-bottom: 1px solid var(--rule-soft); }
   .board { display: grid; grid-template-columns: repeat(auto-fit, minmax(238px, 1fr)); gap: 12px; margin-bottom: 56px; }
@@ -84,6 +84,7 @@
   .bar .b-pending { background: var(--pending); }
   .bar .b-rejected { background: var(--rejected); }
   .bar .b-scope { background: var(--scope); opacity: .55; }
+  .bar .b-wip { background: var(--wip); }
 
   .svc { margin-bottom: 52px; scroll-margin-top: 24px; }
   .svc h3 { color: var(--heading); font-family: var(--mono); font-size: 20px; font-weight: 600; margin: 0 0 4px; letter-spacing: -.015em; }
@@ -98,7 +99,7 @@
   .spec dd li::marker { color: var(--ink-3); }
 
   .scroller { overflow-x: auto; border: 1px solid #c856374d; border-radius: 3px; background: var(--surface); }
-  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; table-layout: fixed; }
   th { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; text-align: left; padding: 9px 14px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
   td { padding: 7px 14px; border-bottom: 1px solid var(--rule-soft); vertical-align: baseline; }
   tr:last-child td { border-bottom: none; }
@@ -115,7 +116,6 @@
     table { font-size: 12px; }
     td.m, td.v { white-space: normal; overflow-wrap: anywhere; font-size: 11.5px; }
     .tag { font-size: 9px; padding: 2px 5px; letter-spacing: .06em; }
-    .tag.wip { margin-left: 4px; }
   }
 
   .foot { border-top: 2px solid var(--ink); padding-top: 20px; margin-top: 8px; color: var(--ink-2); font-size: 13.5px; max-width: 72ch; display: flex; flex-direction: column; gap: 10px; }
@@ -248,9 +248,9 @@
 </div>
 
 <script>
-const Y = 'yes', P = 'partial', N = 'pending', R = 'rejected', X = 'scope';
-const LABEL = { yes: 'Full', partial: 'Partial', pending: 'Pending', rejected: 'Rejected', scope: 'Scope' };
-const ORDER = [Y, P, N, R, X];
+const Y = 'yes', P = 'partial', N = 'pending', W = 'wip', R = 'rejected', X = 'scope';
+const LABEL = { yes: 'Full', partial: 'Partial', pending: 'Pending', wip: 'WIP', rejected: 'Rejected', scope: 'Scope' };
+const ORDER = [Y, P, W, N, R, X];
 
 const services = [
 {
@@ -432,59 +432,116 @@ const services = [
   ]
 },
 {
-  id: 'bitcoind', name: 'bitcoind JSON-RPC + REST',
+  id: 'bitcoind', name: 'bitcoind JSON-RPC + REST', grouped: true,
   note: 'Drop-in bitcoind compatibility for relevant node methods.',
   spec: { Transport: 'http/s, ws/s', Framing: 'json-rpc 2.0 + REST', Auth: 'tls server, mutual; http basic (scoped)', Channel: 'half duplex' },
   methods: [
-    ['addnode', Y, '', '', '', 1],
-    ['createrawtransaction', Y, ''],
-    ['decoderawtransaction', Y, ''],
-    ['decodescript', Y, ''],
-    ['disconnectnode', Y, '', '', '', 1],
-    ['getaddednodeinfo', Y, '', '', '', 1],
-    ['getbestblockhash', Y, ''],
-    ['getblock', Y, ''],
-    ['getblockchaininfo', Y, ''],
-    ['getblockcount', Y, ''],
-    ['getblockfilter', Y, 'client-filter index required'],
-    ['getblockhash', Y, ''],
-    ['getblockheader', Y, ''],
-    ['getconnectioncount', Y, '', '', '', 1],
-    ['getmemoryinfo', Y, '', '', '', 1],
-    ['getmininginfo', Y, '', '', '', 1],
-    ['getnetworkhashps', Y, ''],
-    ['getnetworkinfo', Y, ''],
-    ['getpeerinfo', Y, '', '', '', 1],
-    ['getrawtransaction', Y, ''],
-    ['getrpcinfo', Y, '', '', '', 1],
-    ['gettxout', Y, ''],
-    ['help', Y, ''],
-    ['logging', Y, '', '', '', 1],
-    ['ping', Y, '', '', '', 1],
-    ['setnetworkactive', Y, 'existing node capability, used in snapshotting', '', '', 1],
-    ['submitblock', Y, '', '', '', 1],
-    ['uptime', Y, '', '', '', 1],
-    ['validateaddress', Y, ''],
-    ['sendrawtransaction', P, 'validates against confirmed only until v5 tx pool'],
-    ['testmempoolaccept', P, 'validates against confirmed only until v5 tx pool', '', '', 1],
-    ['estimaterawfee', N, 'v5 tx pool'],
-    ['getblockstats', N, '', '', '', 1],
-    ['getblocktemplate', N, 'v5 tx pool'],
-    ['getchaintxstats', N, '', '', '', 1],
-    ['gettxoutsetinfo', N, '', '', '', 1],
-    ['prioritisetransaction', N, 'v5 tx pool'],
-    ['savemempool', N, 'v5 tx pool'],
-    ['scantxoutset', N, '', '', '', 1],
-    ['clearbanned', R, 'dos vector'],
-    ['createmultisig', R, 'client-side computation'],
-    ['decodepsbt', R, 'client-side computation'],
-    ['getdescriptorinfo', R, 'client-side computation'],
-    ['listbanned', R, 'dos vector'],
-    ['pruneblockchain', R, 'dynamic pruning not supported'],
-    ['setban', R, 'dos vector'],
-    ['stop', R, ''],
-    ['verifychain', R, 'chain is always verified'],
-    ['(56 wallet methods)', X, 'wallet']
+    // blockchain
+    ['getbestblockhash', Y, '', 'blockchain'],
+    ['getblock', Y, '', 'blockchain'],
+    ['getblockchaininfo', Y, '', 'blockchain'],
+    ['getblockcount', Y, '', 'blockchain'],
+    ['getblockfilter', Y, 'client-filter index required', 'blockchain'],
+    ['getblockhash', Y, '', 'blockchain'],
+    ['getblockheader', Y, '', 'blockchain'],
+    ['verifychain', Y, 'no-op, store is reliable', 'blockchain'],
+    ['gettxout', Y, '', 'blockchain'],
+    ['dumptxoutset', W, '', 'blockchain'],
+    ['gettxoutproof', W, '', 'blockchain'],
+    ['gettxoutsetinfo', W, '', 'blockchain'],
+    ['loadtxoutset', W, '', 'blockchain'],
+    ['scantxoutset', W, '', 'blockchain'],
+    ['verifytxoutproof', W, '', 'blockchain'],
+    ['getblockfrompeer', W, '', 'blockchain'],
+    ['getblockstats', W, '', 'blockchain'],
+    ['getchainstates', W, '', 'blockchain'],
+    ['getchaintips', W, '', 'blockchain'],
+    ['getchaintxstats', W, '', 'blockchain'],
+    ['getdeploymentinfo', W, '', 'blockchain'],
+    ['getdescriptoractivity', W, '', 'blockchain'],
+    ['getdifficulty', W, '', 'blockchain'],
+    ['preciousblock', W, '', 'blockchain'],
+    ['scanblocks', W, '', 'blockchain'],
+    ['waitforblock', W, '', 'blockchain'],
+    ['waitforblockheight', W, '', 'blockchain'],
+    ['waitfornewblock', W, '', 'blockchain'],
+    ['getmempoolancestors', N, 'v5 tx pool', 'blockchain'],
+    ['getmempoolcluster', N, 'v5 tx pool', 'blockchain'],
+    ['getmempooldescendants', N, 'v5 tx pool', 'blockchain'],
+    ['getmempoolentry', N, 'v5 tx pool', 'blockchain'],
+    ['getmempoolinfo', N, 'v5 tx pool', 'blockchain'],
+    ['getrawmempool', N, 'v5 tx pool', 'blockchain'],
+    ['gettxspendingprevout', N, 'v5 tx pool', 'blockchain'],
+    ['importmempool', N, 'v5 tx pool', 'blockchain'],
+    ['savemempool', N, 'v5 tx pool', 'blockchain'],
+    ['pruneblockchain', R, 'dynamic pruning not supported', 'blockchain'],
+    // transaction tooling
+    ['createrawtransaction', Y, 'computation only', 'transaction tooling'],
+    ['decoderawtransaction', Y, 'computation only', 'transaction tooling'],
+    ['decodescript', Y, 'computation only', 'transaction tooling'],
+    ['getrawtransaction', Y, '', 'transaction tooling'],
+    ['sendrawtransaction', P, 'validates against confirmed only until v5 tx pool', 'transaction tooling'],
+    ['testmempoolaccept', P, 'validates against confirmed only until v5 tx pool', 'transaction tooling'],
+    ['analyzepsbt', W, 'psbt, computation only', 'transaction tooling'],
+    ['combinepsbt', W, 'psbt, computation only', 'transaction tooling'],
+    ['converttopsbt', W, 'psbt, computation only', 'transaction tooling'],
+    ['createpsbt', W, 'psbt, computation only', 'transaction tooling'],
+    ['decodepsbt', W, 'psbt, computation only', 'transaction tooling'],
+    ['finalizepsbt', W, 'psbt, computation only', 'transaction tooling'],
+    ['joinpsbts', W, 'psbt, computation only', 'transaction tooling'],
+    ['descriptorprocesspsbt', W, 'psbt', 'transaction tooling'],
+    ['utxoupdatepsbt', W, 'psbt', 'transaction tooling'],
+    ['abortprivatebroadcast', N, 'v5 tx pool', 'transaction tooling'],
+    ['getprivatebroadcastinfo', N, 'v5 tx pool', 'transaction tooling'],
+    ['submitpackage', N, 'v5 tx pool', 'transaction tooling'],
+    // mining
+    ['getnetworkhashps', Y, '', 'mining'],
+    ['getmininginfo', W, '', 'mining'],
+    ['submitblock', W, '', 'mining'],
+    ['submitheader', W, '', 'mining'],
+    ['getblocktemplate', N, 'v5 tx pool', 'mining'],
+    ['getprioritisedtransactions', N, 'v5 tx pool', 'mining'],
+    ['prioritisetransaction', N, 'v5 tx pool', 'mining'],
+    // network
+    ['getnetworkinfo', Y, '', 'network'],
+    ['addnode', W, '', 'network'],
+    ['disconnectnode', W, '', 'network'],
+    ['exportasmap', W, '', 'network'],
+    ['getaddednodeinfo', W, '', 'network'],
+    ['getaddrmaninfo', W, '', 'network'],
+    ['getconnectioncount', W, '', 'network'],
+    ['getnettotals', W, '', 'network'],
+    ['getnodeaddresses', W, '', 'network'],
+    ['getpeerinfo', W, '', 'network'],
+    ['ping', W, '', 'network'],
+    ['setnetworkactive', W, 'existing node capability, used in snapshotting', 'network'],
+    ['clearbanned', R, 'dos vector', 'network'],
+    ['listbanned', R, 'dos vector', 'network'],
+    ['setban', R, 'dos vector', 'network'],
+    // utility
+    ['validateaddress', Y, 'computation only', 'utility'],
+    ['createmultisig', W, 'computation only', 'utility'],
+    ['deriveaddresses', W, 'computation only', 'utility'],
+    ['getdescriptorinfo', W, 'computation only', 'utility'],
+    ['verifymessage', W, 'computation only', 'utility'],
+    ['getindexinfo', W, '', 'utility'],
+    ['estimatesmartfee', N, 'v5 tx pool', 'utility'],
+    // control
+    ['help', Y, '', 'control'],
+    ['getmemoryinfo', W, '', 'control'],
+    ['getopenrpcinfo', W, '', 'control'],
+    ['getrpcinfo', W, '', 'control'],
+    ['logging', W, '', 'control'],
+    ['uptime', W, '', 'control'],
+    ['stop', R, '', 'control'],
+    // notifications
+    ['getzmqnotifications', W, '', 'notifications'],
+    // signer
+    ['enumeratesigners', W, 'external signer', 'signer'],
+    // test
+    ['(19 test methods)', X, 'test hooks', 'test'],
+    // wallet
+    ['(57 wallet methods)', X, 'no wallet', 'wallet']
   ],
   extraTitle: 'REST',
   extraNote: '',
@@ -570,7 +627,7 @@ const services = [
 
 const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const tag = st => `<span class="tag ${st}">${LABEL[st]}</span>`;
-const stat = (st, wip) => tag(st) + (wip ? '<span class="tag wip">WIP</span>' : '');
+const stat = st => tag(st);
 const count = (list, v) => list.filter(m => m[1] === v).length;
 
 document.getElementById('board').innerHTML = services.map(s => {
@@ -587,21 +644,30 @@ document.getElementById('board').innerHTML = services.map(s => {
 
 document.getElementById('services').innerHTML = services.map(s => {
   const n = s.methods.length;
-  const rows = s.methods.map(([m, st, note, ver, cfg, wip]) => `<tr class="${st === Y || st === P ? '' : 'dim'}">
+  const rowHtml = ([m, st, note, ver, cfg, wip]) => `<tr class="${st === Y || st === P ? '' : 'dim'}">
       <td class="m">${esc(m)}</td>
       ${s.versioned ? `<td class="v">${esc(ver || '')}</td>` : ''}
       ${s.configured ? `<td class="v">${esc(cfg || '')}</td>` : ''}
       <td class="st">${stat(st, wip)}</td>
       <td class="no">${esc(note)}</td>
-    </tr>`).join('');
-  const table = n ? `<div class="scroller"><table>
-      <thead><tr><th>${s.label || 'Method'}</th>${s.versioned ? '<th>Version</th>' : ''}${s.configured ? '<th>Config</th>' : ''}<th>Status</th><th>Notes</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table></div>` : '';
+    </tr>`;
+  const tableHtml = body => `<div class="scroller"><table>
+      <thead><tr><th style="width:42%">${s.label || 'Method'}</th>${s.versioned ? '<th style="width:88px">Version</th>' : ''}${s.configured ? '<th style="width:88px">Config</th>' : ''}<th style="width:110px">Status</th><th>Notes</th></tr></thead>
+      <tbody>${body}</tbody>
+    </table></div>`;
+  const cap = t => t ? t.charAt(0).toUpperCase() + t.slice(1) : t;
+  let table = '';
+  if (s.grouped && n) {
+    const cats = [];
+    s.methods.forEach(row => { const c = row[3] || ''; let g = cats.find(x => x.c === c); if (!g) { g = { c, rows: [] }; cats.push(g); } g.rows.push(row); });
+    table = cats.map(g => `<h2 style="margin:26px 0 8px;border:none;padding:0">${esc(cap(g.c))}</h2>${tableHtml(g.rows.map(rowHtml).join(''))}`).join('');
+  } else if (n) {
+    table = tableHtml(s.methods.map(rowHtml).join(''));
+  }
   const extra = s.extra ? `<h2 style="margin:26px 0 8px;border:none;padding:0">${esc(s.extraTitle)}</h2>
     ${s.extraNote ? `<p class="svc-note">${esc(s.extraNote)}</p>` : ''}
     <div class="scroller"><table>
-      <thead><tr><th>${esc(s.extraLabel)}</th>${s.id === 'p2p' ? '<th>Bit</th>' : ''}<th>Status</th><th>Notes</th></tr></thead>
+      <thead><tr><th style="width:42%">${esc(s.extraLabel)}</th>${s.id === 'p2p' ? '<th style="width:88px">Bit</th>' : ''}<th style="width:110px">Status</th><th>Notes</th></tr></thead>
       <tbody>${s.extra.map(([m, st, note, bit]) => `<tr class="${st === Y || st === P ? '' : 'dim'}">
         <td class="m">${esc(m)}</td>
         ${s.id === 'p2p' ? `<td class="v">${esc(bit)}</td>` : ''}
