@@ -109,12 +109,12 @@
   td.no { color: var(--ink-2); font-size: 12.5px; }
   tr.dim td.m { color: var(--ink-3); }
 
-  /* Narrow viewports: let wide tables fit rather than scroll. */
+  /* Narrow viewports: tables keep their columns and scroll in the scroller. */
   @media (max-width: 760px) {
     .wrap { padding: 0 14px 72px; }
     th, td { padding: 6px 8px; }
     table { font-size: 12px; }
-    td.m, td.v { white-space: normal; overflow-wrap: anywhere; font-size: 11.5px; }
+    td.m, td.v { font-size: 11.5px; }
     .tag { font-size: 9px; padding: 2px 5px; letter-spacing: .06em; }
   }
 
@@ -377,15 +377,15 @@ const services = [
     ['getcfilters', Y, 'bip157, client-filter index required', '70015', ''],
     ['getcfheaders', Y, 'bip157, client-filter index required', '70015', ''],
     ['getcfcheckpt', Y, 'bip157, client-filter index required', '70015', ''],
-    ['sendaddrv2', Y, 'bip155', '70016', 'enable_address_v2', 1],
     ['tx', P, 'outbound tx relay only until v5 tx pool', '106', 'enable_relay'],
-    ['wtxidrelay', N, 'bip339, v5 tx pool', '70016', 'enable_witness_tx'],
+    ['sendaddrv2', N, 'bip155, not negotiated, v5', '70016', 'enable_address_v2', 1],
+    ['wtxidrelay', N, 'bip339, not negotiated, v5', '70016', 'enable_witness_tx'],
     ['mempool', N, 'bip35, v5 tx pool', '60002', ''],
     ['feefilter', N, 'bip133, v5 tx pool', '70013', ''],
-    ['cmpctblock', N, 'bip152, not negotiated', '70014', 'enable_compact'],
-    ['sendcmpct', N, 'bip152, not negotiated', '70014', 'enable_compact'],
-    ['blocktxn', N, 'bip152, not negotiated', '70014', 'enable_compact'],
-    ['getblocktxn', N, 'bip152, not negotiated', '70014', 'enable_compact'],
+    ['cmpctblock', N, 'bip152, not negotiated, v5', '70014', 'enable_compact'],
+    ['sendcmpct', N, 'bip152, not negotiated, v5', '70014', 'enable_compact'],
+    ['blocktxn', N, 'bip152, not negotiated, v5', '70014', 'enable_compact'],
+    ['getblocktxn', N, 'bip152, not negotiated, v5', '70014', 'enable_compact'],
     ['notfound', N, 'bip37', '70001', '', 1],
     ['filterload', R, 'bip37, privacy leak', '70001', ''],
     ['filteradd', R, 'bip37, privacy leak', '70001', ''],
@@ -432,7 +432,7 @@ const services = [
   ]
 },
 {
-  id: 'bitcoind', name: 'bitcoind JSON-RPC + REST', grouped: true,
+  id: 'bitcoind', name: 'bitcoind query', grouped: true,
   note: 'Drop-in bitcoind compatibility for relevant node methods.',
   spec: { Transport: 'http/s, ws/s', Framing: 'json-rpc 2.0 + REST', Auth: 'tls server, mutual; http basic (scoped)', Channel: 'half duplex' },
   methods: [
@@ -453,11 +453,11 @@ const services = [
     ['getblockfrompeer', W, '', 'blockchain'],
     ['getblockstats', W, '', 'blockchain'],
     ['getchainstates', W, '', 'blockchain'],
-    ['getchaintips', W, '', 'blockchain'],
+    ['getchaintips', Y, '', 'blockchain'],
     ['getchaintxstats', W, '', 'blockchain'],
     ['getdeploymentinfo', W, '', 'blockchain'],
     ['getdescriptoractivity', W, '', 'blockchain'],
-    ['getdifficulty', W, '', 'blockchain'],
+    ['getdifficulty', Y, '', 'blockchain'],
     ['preciousblock', W, '', 'blockchain'],
     ['scanblocks', W, '', 'blockchain'],
     ['waitforblock', W, '', 'blockchain'],
@@ -523,8 +523,8 @@ const services = [
     ['createmultisig', W, 'computation only', 'utility'],
     ['deriveaddresses', W, 'computation only', 'utility'],
     ['getdescriptorinfo', W, 'computation only', 'utility'],
-    ['verifymessage', W, 'computation only', 'utility'],
-    ['getindexinfo', W, '', 'utility'],
+    ['verifymessage', Y, 'computation only', 'utility'],
+    ['getindexinfo', Y, '', 'utility'],
     ['estimatesmartfee', N, 'v5 tx pool', 'utility'],
     // control
     ['help', Y, '', 'control'],
@@ -536,12 +536,10 @@ const services = [
     ['stop', R, '', 'control'],
     // notifications
     ['getzmqnotifications', W, '', 'notifications'],
-    // signer
-    ['enumeratesigners', W, 'external signer', 'signer'],
     // test
     ['(19 test methods)', X, 'test hooks', 'test'],
     // wallet
-    ['(57 wallet methods)', X, 'no wallet', 'wallet']
+    ['(58 wallet methods)', X, 'no wallet', 'wallet']
   ],
   extraTitle: 'REST',
   extraNote: '',
@@ -564,8 +562,8 @@ const services = [
   ]
 },
 {
-  id: 'zeromq', name: 'bitcoind ZeroMQ',
-  note: 'Drop-in bitcoind compatibility.',
+  id: 'zeromq', name: 'bitcoind broadcast',
+  note: 'Drop-in bitcoind compatibility for the ZeroMQ interface.',
   spec: { Transport: 'zmq/s', Framing: 'zeromq', Auth: 'curvecp server, mutual', Channel: 'full duplex (notifications)' },
   methods: [
     ['hashblock', N, 'v5'],
@@ -646,13 +644,16 @@ document.getElementById('services').innerHTML = services.map(s => {
   const n = s.methods.length;
   const rowHtml = ([m, st, note, ver, cfg, wip]) => `<tr class="${st === Y || st === P ? '' : 'dim'}">
       <td class="m">${esc(m)}</td>
+      <td class="st">${stat(st, wip)}</td>
       ${s.versioned ? `<td class="v">${esc(ver || '')}</td>` : ''}
       ${s.configured ? `<td class="v">${esc(cfg || '')}</td>` : ''}
-      <td class="st">${stat(st, wip)}</td>
       <td class="no">${esc(note)}</td>
     </tr>`;
-  const tableHtml = body => `<div class="scroller"><table>
-      <thead><tr><th style="width:42%">${s.label || 'Method'}</th>${s.versioned ? '<th style="width:88px">Version</th>' : ''}${s.configured ? '<th style="width:88px">Config</th>' : ''}<th style="width:110px">Status</th><th>Notes</th></tr></thead>
+  // Fixed pixel columns, identical across all tables. min-width makes the
+  // scroller scroll rather than crushing columns on narrow viewports.
+  const minWidth = 308 + (s.versioned ? 116 : 0) + (s.configured ? 168 : 0) + 138 + 200;
+  const tableHtml = body => `<div class="scroller"><table style="min-width:${minWidth}px">
+      <thead><tr><th style="width:280px">${s.label || 'Method'}</th><th style="width:110px">Status</th>${s.versioned ? '<th style="width:88px">Version</th>' : ''}${s.configured ? '<th style="width:140px">Config</th>' : ''}<th>Notes</th></tr></thead>
       <tbody>${body}</tbody>
     </table></div>`;
   const cap = t => t ? t.charAt(0).toUpperCase() + t.slice(1) : t;
@@ -666,12 +667,12 @@ document.getElementById('services').innerHTML = services.map(s => {
   }
   const extra = s.extra ? `<h2 style="margin:26px 0 8px;border:none;padding:0">${esc(s.extraTitle)}</h2>
     ${s.extraNote ? `<p class="svc-note">${esc(s.extraNote)}</p>` : ''}
-    <div class="scroller"><table>
-      <thead><tr><th style="width:42%">${esc(s.extraLabel)}</th>${s.id === 'p2p' ? '<th style="width:88px">Bit</th>' : ''}<th style="width:110px">Status</th><th>Notes</th></tr></thead>
+    <div class="scroller"><table style="min-width:${308 + (s.id === 'p2p' ? 284 : 0) + 138 + 200}px">
+      <thead><tr><th style="width:280px">${esc(s.extraLabel)}</th><th style="width:110px">Status</th>${s.id === 'p2p' ? '<th style="width:256px">Bit</th>' : ''}<th>Notes</th></tr></thead>
       <tbody>${s.extra.map(([m, st, note, bit]) => `<tr class="${st === Y || st === P ? '' : 'dim'}">
         <td class="m">${esc(m)}</td>
-        ${s.id === 'p2p' ? `<td class="v">${esc(bit)}</td>` : ''}
         <td class="st">${tag(st)}</td>
+        ${s.id === 'p2p' ? `<td class="v">${esc(bit)}</td>` : ''}
         <td class="no">${esc(note)}</td>
       </tr>`).join('')}</tbody>
     </table></div>` : '';
