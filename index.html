@@ -451,8 +451,8 @@ const services = [
   methods: [
     // blockchain
     ['getbestblockhash', Y, '', 'blockchain'],
-    ['getblock', Y, '', 'blockchain'],
-    ['getblockchaininfo', Y, '', 'blockchain'],
+    ['getblock', P, 'verbosity 3 omitted', 'blockchain'],
+    ['getblockchaininfo', P, 'size_on_disk omitted', 'blockchain'],
     ['getblockcount', Y, '', 'blockchain'],
     ['getblockfilter', Y, 'client-filter index required', 'blockchain'],
     ['getblockhash', Y, '', 'blockchain'],
@@ -464,7 +464,7 @@ const services = [
     ['scantxoutset', W, '', 'blockchain'],
     ['verifytxoutproof', Y, '', 'blockchain'],
     ['getblockfrompeer', W, '', 'blockchain'],
-    ['getblockstats', P, 'no utxo store, size stats omitted', 'blockchain'],
+    ['getblockstats', Y, 'no utxo store, size stats inapplicable', 'blockchain'],
     ['getchainstates', P, 'cache sizes zero; candidate chain reported unvalidated, assumeutxo rejected', 'blockchain'],
     ['getchaintips', Y, '', 'blockchain'],
     ['getchaintxstats', Y, '', 'blockchain'],
@@ -489,9 +489,9 @@ const services = [
     ['loadtxoutset', R, 'assumeutxo is a terrible idea', 'blockchain'],
     ['pruneblockchain', R, 'dynamic pruning not supported', 'blockchain'],
     // transaction tooling
-    ['createrawtransaction', Y, 'computation only', 'transaction tooling'],
-    ['decoderawtransaction', Y, 'computation only', 'transaction tooling'],
-    ['decodescript', Y, 'computation only', 'transaction tooling'],
+    ['createrawtransaction', P, 'computation only; data outputs omitted', 'transaction tooling'],
+    ['decoderawtransaction', P, 'computation only; iswitness param omitted', 'transaction tooling'],
+    ['decodescript', P, 'computation only; descriptor and segwit forms omitted', 'transaction tooling'],
     ['getrawtransaction', Y, '', 'transaction tooling'],
     ['sendrawtransaction', P, 'validates against confirmed only until v5 tx pool', 'transaction tooling'],
     ['testmempoolaccept', P, 'validates against confirmed only until v5 tx pool', 'transaction tooling'],
@@ -508,7 +508,7 @@ const services = [
     ['getprivatebroadcastinfo', N, 'v5 tx pool', 'transaction tooling'],
     ['submitpackage', N, 'v5 tx pool', 'transaction tooling'],
     // mining
-    ['getnetworkhashps', Y, '', 'mining'],
+    ['getnetworkhashps', P, 'difficulty estimate, nblocks unused', 'mining'],
     ['getmininginfo', P, 'pool fields zero until v5 tx pool', 'mining'],
     ['submitblock', W, '', 'mining'],
     ['submitheader', W, '', 'mining'],
@@ -516,7 +516,7 @@ const services = [
     ['getprioritisedtransactions', N, 'v5 tx pool', 'mining'],
     ['prioritisetransaction', N, 'v5 tx pool', 'mining'],
     // network
-    ['getnetworkinfo', Y, '', 'network'],
+    ['getnetworkinfo', P, 'services and per-network detail omitted', 'network'],
     ['addnode', W, '', 'network'],
     ['disconnectnode', W, '', 'network'],
     ['exportasmap', W, '', 'network'],
@@ -532,7 +532,7 @@ const services = [
     ['listbanned', R, 'dos vector', 'network'],
     ['setban', R, 'dos vector', 'network'],
     // utility
-    ['validateaddress', Y, 'computation only', 'utility'],
+    ['validateaddress', P, 'computation only; scriptPubKey omitted', 'utility'],
     ['createmultisig', Y, 'computation only', 'utility'],
     ['deriveaddresses', W, 'computation only', 'utility'],
     ['getdescriptorinfo', W, 'computation only', 'utility'],
@@ -540,7 +540,7 @@ const services = [
     ['getindexinfo', Y, '', 'utility'],
     ['estimatesmartfee', N, 'v5 tx pool', 'utility'],
     // control
-    ['help', Y, '', 'control'],
+    ['help', P, 'method names only', 'control'],
     ['getmemoryinfo', P, 'no locked pool', 'control'],
     ['getopenrpcinfo', W, '', 'control'],
     ['getrpcinfo', Y, '', 'control'],
