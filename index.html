@@ -491,7 +491,7 @@ const services = [
     // transaction tooling
     ['createrawtransaction', Y, 'computation only', 'transaction tooling'],
     ['decoderawtransaction', Y, 'computation only', 'transaction tooling'],
-    ['decodescript', P, 'computation only; descriptor and segwit forms omitted', 'transaction tooling'],
+    ['decodescript', P, 'computation only; raw descriptor until inference', 'transaction tooling'],
     ['getrawtransaction', Y, '', 'transaction tooling'],
     ['sendrawtransaction', P, 'validates against confirmed only until v5 tx pool', 'transaction tooling'],
     ['testmempoolaccept', P, 'validates against confirmed only until v5 tx pool', 'transaction tooling'],
