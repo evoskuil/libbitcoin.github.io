@@ -490,7 +490,7 @@ const services = [
     ['pruneblockchain', R, 'dynamic pruning not supported', 'blockchain'],
     // transaction tooling
     ['createrawtransaction', Y, 'computation only', 'transaction tooling'],
-    ['decoderawtransaction', P, 'computation only; iswitness param omitted', 'transaction tooling'],
+    ['decoderawtransaction', Y, 'computation only', 'transaction tooling'],
     ['decodescript', P, 'computation only; descriptor and segwit forms omitted', 'transaction tooling'],
     ['getrawtransaction', Y, '', 'transaction tooling'],
     ['sendrawtransaction', P, 'validates against confirmed only until v5 tx pool', 'transaction tooling'],
