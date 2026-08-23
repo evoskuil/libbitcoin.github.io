@@ -413,7 +413,7 @@ const services = [
     ['node_witness', Y, 'witness inventory served', 'bit 3'],
     ['node_client_filters', Y, 'client-filter index served', 'bit 6'],
     ['node_network_limited', Y, 'drops input script/witness under milestone/checkpoint', 'bit 10'],
-    ['node_encrypted_transport', N, 'bip324, p2ps enabled', 'bit 11'],
+    ['node_encrypted_transport', Y, 'bip324, p2ps enabled', 'bit 11'],
     ['node_bloom', R, 'bip111 allows bip37 disable by not setting this', 'bit 2'],
     ['node_utxo', R, 'bip64 obsolete', 'bit 1']
   ]
@@ -534,8 +534,8 @@ const services = [
     // utility
     ['validateaddress', Y, 'computation only', 'utility'],
     ['createmultisig', Y, 'computation only', 'utility'],
-    ['deriveaddresses', W, 'computation only', 'utility'],
-    ['getdescriptorinfo', W, 'computation only', 'utility'],
+    ['deriveaddresses', Y, 'computation only; bip380 subset', 'utility'],
+    ['getdescriptorinfo', Y, 'computation only; bip380 subset', 'utility'],
     ['verifymessage', Y, 'computation only', 'utility'],
     ['getindexinfo', Y, '', 'utility'],
     ['estimatesmartfee', N, 'v5 tx pool', 'utility'],
