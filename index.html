@@ -423,7 +423,7 @@ const services = [
   note: 'All implemented bitcoind methods are also served here.',
   spec: { Transport: 'http/s, ws/s', Framing: 'json-rpc 1.0', Auth: 'tls server, mutual; http basic (scoped)', Channel: 'full duplex (notifications)' },
   methods: [
-    ['authenticate', Y, 'in-band credential, ws only'],
+    ['authenticate', Y, ''],
     ['session', Y, ''],
     ['getbestblock', Y, ''],
     ['getcurrentnet', Y, ''],
