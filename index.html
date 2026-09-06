@@ -282,7 +282,7 @@ const services = [
     ['blockchain.block.headers', Y, '', '1.2+'],
     ['blockchain.block.get_header', Y, '', '1.0–1.3'],
     ['blockchain.block.get_chunk', Y, '', '1.0–1.3'],
-    ['blockchain.estimatefee', Y, '', '1.0+'],
+    ['blockchain.estimatefee', Y, 'block-based estimation', '1.0+'],
     ['blockchain.relayfee', Y, '', '1.0–1.5'],
     ['blockchain.transaction.get', Y, '', '1.0+'],
     ['blockchain.transaction.get_merkle', Y, '', '1.4+'],
@@ -424,6 +424,7 @@ const services = [
   methods: [
     ['authenticate', Y, ''],
     ['session', Y, ''],
+    ['estimatefee', Y, 'block-based estimation'],
     ['getbestblock', Y, ''],
     ['getcfilter', Y, 'block filters required'],
     ['getcfilterheader', Y, 'block filters required'],
@@ -439,7 +440,6 @@ const services = [
     ['rescan', Y, 'address index required'],
     ['node', W, ''],
     ['debuglevel', P, 'levels, read only'],
-    ['estimatefee', N, 'v5 tx pool'],
     ['generate', N, 'v5 tx pool'],
     ['getgenerate', N, 'v5 tx pool'],
     ['gethashespersec', N, 'v5 tx pool'],
@@ -468,8 +468,8 @@ const services = [
     ['verifychain', Y, 'no-op (store is reliable)', 'blockchain'],
     ['gettxout', Y, '', 'blockchain'],
     ['gettxoutproof', Y, '', 'blockchain'],
-    ['gettxoutsetinfo', Y, 'full utxo scan', 'blockchain'],
-    ['scantxoutset', Y, 'full utxo scan (unless address index)', 'blockchain'],
+    ['gettxoutsetinfo', Y, 'full scan', 'blockchain'],
+    ['scantxoutset', Y, 'full scan (unless address index)', 'blockchain'],
     ['verifytxoutproof', Y, '', 'blockchain'],
     ['getblockstats', Y, 'no utxo store (size stats inapplicable)', 'blockchain'],
     ['getchainstates', Y, 'no utxo store (cache sizes zero, no assume utxo)', 'blockchain'],
@@ -521,9 +521,9 @@ const services = [
     ['descriptorprocesspsbt', R, 'signing is a wallet function; keys never transit the server', 'transaction tooling'],
     // mining
     ['getnetworkhashps', Y, '', 'mining'],
-    ['submitblock', Y, '', 'mining'],
     ['submitheader', Y, '', 'mining'],
     ['getmininginfo', P, 'pool fields zero until v5 tx pool', 'mining'],
+    ['submitblock', N, 'v5 tx pool', 'mining'],
     ['getblocktemplate', N, 'v5 tx pool', 'mining'],
     ['getprioritisedtransactions', N, 'v5 tx pool', 'mining'],
     ['prioritisetransaction', N, 'v5 tx pool', 'mining'],
@@ -550,7 +550,7 @@ const services = [
     ['getdescriptorinfo', Y, 'computation only; bip380 subset', 'utility'],
     ['verifymessage', Y, 'computation only', 'utility'],
     ['getindexinfo', Y, '', 'utility'],
-    ['estimatesmartfee', N, 'v5 tx pool', 'utility'],
+    ['estimatesmartfee', Y, 'block-based estimation', 'utility'],
     ['signmessagewithprivkey', R, 'signing is a wallet function; keys never transit the server', 'utility'],
     // control
     ['help', Y, '', 'control'],
@@ -560,9 +560,9 @@ const services = [
     ['uptime', Y, '', 'control'],
     ['rpc.discover', Y, '', 'control'],
     ['logging', P, 'levels, read only', 'control'],
-    ['stop', R, 'disallowed', 'control'],
+    ['stop', R, '', 'control'],
     // notifications
-    ['getzmqnotifications', P, 'empty until zeromq service', 'notifications'],
+    ['getzmqnotifications', Y, '', 'notifications'],
     // test
     ['(19 test methods)', X, 'test hooks', 'test'],
     // wallet
@@ -594,11 +594,11 @@ const services = [
   note: 'Drop-in bitcoind compatibility for the ZeroMQ interface.',
   spec: { Transport: 'zmtp/s', Framing: 'zeromq', Auth: 'curvecp server, mutual', Channel: 'full duplex (notifications)' },
   methods: [
-    ['hashblock', N, 'v5'],
-    ['hashtx', N, 'v5'],
-    ['rawblock', N, 'v5'],
-    ['rawtx', N, 'v5'],
-    ['sequence', N, 'v5']
+    ['hashblock', Y, ''],
+    ['hashtx', Y, ''],
+    ['rawblock', Y, ''],
+    ['rawtx', Y, ''],
+    ['sequence', Y, '']
   ]
 },
 {
