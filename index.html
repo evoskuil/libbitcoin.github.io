@@ -239,12 +239,12 @@
       <div><dt>Dependencies</dt><dd><ul><li>boost</li><li>secp256k1</li><li>ultrafastsecp (required for gpu)</li></ul></dd></div>
       <div><dt>Platforms</dt><dd><ul><li>linux, windows, macos</li><li>avx2/512/shani (intel)</li><li>neon/crypto (arm)</li></ul></dd></div>
       <div><dt>Builds</dt><dd><ul><li>g++, clang++, xcode, vc++</li><li>gnu, cmake, visual studio</li></ul></dd></div>
-      <div><dt>Deployment</dt><dd><ul><li>single binary executable</li><li>optional config file (ini)</li><li>8 GB RAM minimum</li></ul></dd></div>
+      <div><dt>Deployment</dt><dd><ul><li>single executable (~13 MB)</li><li>optional config file (ini)</li><li>8 GB RAM minimum</li></ul></dd></div>
     </dl>
 
     <h2>Transport &amp; security</h2>
     <dl class="spec" style="margin-bottom:56px">
-      <div><dt>Bindings</dt><dd>p2p/s, tcp/s, http/s, ws/s, zmtp/s*</dd></div>
+      <div><dt>Bindings</dt><dd>p2p/s, tcp/s, http/s, ws/s, zmtp/s</dd></div>
       <div><dt>Credentials</dt><dd>multiple roles, method scoped</dd></div>
       <div><dt>Certificates</dt><dd>tls/curvecp* server and mutual (client)</dd></div>
       <div><dt>Outbound</dt><dd>socks5 with proxy auth (e.g. Tor)</dd></div>
@@ -255,7 +255,7 @@
   <div id="services"></div>
 
   <p class="foot">
-    <span>*<code>zmtp</code> (ZeroMQ) and <code>zmtps</code> (CurveZMQ) are not yet implemented, in scope for v5.</span>
+    <span>Copyright &copy; 2011-2026 libbitcoin developers</span>
   </p>
 </div>
 
@@ -267,8 +267,8 @@ const ORDER = [Y, P, W, N, R, X];
 const services = [
 {
   id: 'electrum', name: 'Electrum', versioned: true,
-  note: 'Electrum protocol over TCP/TLS with version negotiation.',
-  spec: { Transport: 'tcp/s', Framing: 'json-rpc 2.0, line', Auth: 'tls server, mutual', Channel: 'full duplex (subscriptions)' },
+  note: 'Electrum protocol with version negotiation. An http/s + ws/s transport is supported on the same port.',
+  spec: { Transport: 'tcp/s, http/s, ws/s', Framing: 'json-rpc 2.0', Auth: 'tls server, mutual', Channel: 'full duplex (subscriptions)' },
   methods: [
     ['server.version', Y, '', '1.0+'],
     ['server.banner', Y, '', '1.0+'],
@@ -419,8 +419,8 @@ const services = [
 },
 {
   id: 'btcd', name: 'btcd',
-  note: 'All methods in the bitcoind query interface are also served here.',
-  spec: { Transport: 'http/s, ws/s', Framing: 'json-rpc 1.0', Auth: 'tls server, mutual; http basic (scoped)', Channel: 'full duplex (notifications)' },
+  note: 'All methods in the bitcoind query interface are also served here. A tcp/s transport is supported on the same port. Native btcd implementation of bitcoind is not current or consistent, however this implementation is. Native btcd also does not support json-rpc 2.0 named parameters, which are required for compliance, however this implementation does.',
+  spec: { Transport: 'tcp/s, http/s, ws/s', Framing: 'json-rpc 2.0 (with named params)', Auth: 'tls server, mutual; http basic (scoped)', Channel: 'full duplex (notifications)' },
   methods: [
     ['authenticate', Y, ''],
     ['session', Y, ''],
@@ -454,8 +454,8 @@ const services = [
 },
 {
   id: 'bitcoind', name: 'bitcoind query', grouped: true,
-  note: 'Drop-in bitcoind compatibility for relevant node methods.',
-  spec: { Transport: 'http/s, ws/s', Framing: 'json-rpc 1.0/2.0 + REST', Auth: 'tls server, mutual; http basic (scoped)', Channel: 'half duplex' },
+  note: 'Drop-in bitcoind compatibility for node methods. A tcp/s transport is supported on the same port.',
+  spec: { Transport: 'tcp/s, http/s, ws/s', Framing: 'json-rpc 2.0 + REST', Auth: 'tls server, mutual; http basic (scoped)', Channel: 'half duplex' },
   methods: [
     // blockchain
     ['getbestblockhash', Y, '', 'blockchain'],
