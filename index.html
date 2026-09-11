@@ -431,7 +431,7 @@ const services = [
 {
   id: 'bitcoind', name: 'Bitcoind JSON-RPC', grouped: true,
   note: 'Drop-in compatibility for JSON-RPC node methods. A tcp/s transport is supported on the same port.',
-  spec: { Transport: 'tcp/s, http/s, ws/s', Framing: 'json-rpc 2.0 + REST', Auth: 'tls server, mutual; http basic (scoped)', Channel: 'half duplex' },
+  spec: { Transport: 'tcp/s, http/s, ws/s', Framing: 'json-rpc 2.0', Auth: 'tls server, mutual; http basic (scoped)', Channel: 'half duplex' },
   methods: [
     // blockchain
     ['getbestblockhash', Y, '', 'blockchain'],
@@ -548,7 +548,7 @@ const services = [
 {
   id: 'rest', name: 'Bitcoind REST',
   note: 'Drop-in bitcoind compatibility for the REST interface, served on JSON-RPC endpoint.',
-  spec: { Transport: 'zmtp/s', Framing: 'zeromq', Auth: 'curvecp server, mutual', Channel: 'full duplex (notifications)' },
+  spec: { Transport: 'http/s', Framing: 'REST', Auth: 'tls server, mutual; http basic (scoped)', Channel: 'half duplex' },
   methods: [
     ['block', Y, '', ''],
     ['block/notxdetails', Y, '', ''],
