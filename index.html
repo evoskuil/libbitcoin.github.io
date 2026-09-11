@@ -266,6 +266,54 @@ const ORDER = [Y, P, W, N, R, X];
 
 const services = [
 {
+  id: 'admin', name: 'Admin Console', versioned: true,
+  note: 'An isolated operations endpoint, with its own interface and credentials. Streams the node’s log and event telemetry live over websocket, rendered via an embedded html console. Console can be replaced with custom pages by configuration.',
+  spec: { Transport: 'http/s, ws/s', Framing: 'REST + ws', Auth: 'tls server, mutual; http basic (scoped)', Channel: 'full duplex (subscriptions)' },
+  methods: [
+    ['log_subscribe', Y, 'filtered live log stream (10 levels)', 'v1'],
+    ['event_subscribe', Y, 'filtered live event stream (27 event types)', 'v1']
+  ]
+},
+{
+  id: 'native', name: 'Native REST', versioned: true,
+  note: 'A RESTful block explorer with websocket subscriptions, navigating blocks, headers, transactions, inputs, outputs, spenders, and addresses bidirectionally in constant time. All objects are served as json, wire data or hexadecimal text, with an optional witness argument as applicable. Includes robust embedded html block explorer.',
+  spec: { Transport: 'http/s, ws/s', Framing: 'REST + ws', Auth: 'tls server, mutual; http basic (scoped)', Channel: 'full duplex (subscriptions)' },
+  methods: [
+    ['configuration', Y, 'json', 'v1'],
+    ['top', Y, 'json, data, text', 'v1'],
+    ['top_subscribe', Y, 'json', 'v1'],
+    ['block', Y, 'json, data, text; witness', 'v1'],
+    ['block_header', Y, 'json, data, text', 'v1'],
+    ['block_header_context', Y, 'json', 'v1'],
+    ['block_details', Y, 'json', 'v1'],
+    ['block_txs', Y, 'json, data, text', 'v1'],
+    ['block_tx', Y, 'json, data, text; witness', 'v1'],
+    ['block_subscribe', Y, 'json, data, text', 'v1'],
+    ['tx', Y, 'json, data, text; witness', 'v1'],
+    ['tx_header', Y, 'json, data, text', 'v1'],
+    ['tx_details', Y, 'json', 'v1'],
+    ['tx_subscribe', Y, 'json', 'v1'],
+    ['inputs', Y, 'json, data, text; witness', 'v1'],
+    ['input', Y, 'json, data, text; witness', 'v1'],
+    ['input_script', Y, 'json, data, text', 'v1'],
+    ['input_witness', Y, 'json, data, text', 'v1'],
+    ['outputs', Y, 'json, data, text', 'v1'],
+    ['output', Y, 'json, data, text', 'v1'],
+    ['output_script', Y, 'json, data, text', 'v1'],
+    ['output_spender', Y, 'json, data, text', 'v1'],
+    ['output_spenders', Y, 'json, data, text', 'v1'],
+    ['output_subscribe', Y, 'json', 'v1'],
+    ['block_filter', Y, 'json, data, text; block filters required', 'v1'],
+    ['block_filter_hash', Y, 'json, data, text; block filters required', 'v1'],
+    ['block_filter_header', Y, 'json, data, text; block filters required', 'v1'],
+    ['address', Y, 'json; address index required', 'v1'],
+    ['address_confirmed', Y, 'json; address index required', 'v1'],
+    ['address_balance', Y, 'json; address index required', 'v1'],
+    ['address_subscribe', Y, 'json; address index required', 'v1'],
+    ['address_unconfirmed', N, 'v5 tx pool', 'v1']
+  ]
+},
+{
   id: 'electrum', name: 'Electrum', versioned: true,
   note: 'Electrum protocol with version negotiation. An http/s + ws/s transport is supported on the same port.',
   spec: { Transport: 'tcp/s, http/s, ws/s', Framing: 'json-rpc 2.0', Auth: 'tls server, mutual', Channel: 'full duplex (subscriptions)' },
@@ -327,55 +375,7 @@ const services = [
   ]
 },
 {
-  id: 'native', name: 'Native', versioned: true,
-  note: 'A RESTful block explorer with websocket subscriptions, navigating blocks, headers, transactions, inputs, outputs, spenders, and addresses bidirectionally in constant time. All objects are served as json, wire data or hexadecimal text, with an optional witness argument as applicable. Includes robust embedded html block explorer.',
-  spec: { Transport: 'http/s, ws/s', Framing: 'REST + ws', Auth: 'tls server, mutual; http basic (scoped)', Channel: 'full duplex (subscriptions)' },
-  methods: [
-    ['configuration', Y, 'json', 'v1'],
-    ['top', Y, 'json, data, text', 'v1'],
-    ['top_subscribe', Y, 'json', 'v1'],
-    ['block', Y, 'json, data, text; witness', 'v1'],
-    ['block_header', Y, 'json, data, text', 'v1'],
-    ['block_header_context', Y, 'json', 'v1'],
-    ['block_details', Y, 'json', 'v1'],
-    ['block_txs', Y, 'json, data, text', 'v1'],
-    ['block_tx', Y, 'json, data, text; witness', 'v1'],
-    ['block_subscribe', Y, 'json, data, text', 'v1'],
-    ['tx', Y, 'json, data, text; witness', 'v1'],
-    ['tx_header', Y, 'json, data, text', 'v1'],
-    ['tx_details', Y, 'json', 'v1'],
-    ['tx_subscribe', Y, 'json', 'v1'],
-    ['inputs', Y, 'json, data, text; witness', 'v1'],
-    ['input', Y, 'json, data, text; witness', 'v1'],
-    ['input_script', Y, 'json, data, text', 'v1'],
-    ['input_witness', Y, 'json, data, text', 'v1'],
-    ['outputs', Y, 'json, data, text', 'v1'],
-    ['output', Y, 'json, data, text', 'v1'],
-    ['output_script', Y, 'json, data, text', 'v1'],
-    ['output_spender', Y, 'json, data, text', 'v1'],
-    ['output_spenders', Y, 'json, data, text', 'v1'],
-    ['output_subscribe', Y, 'json', 'v1'],
-    ['block_filter', Y, 'json, data, text; block filters required', 'v1'],
-    ['block_filter_hash', Y, 'json, data, text; block filters required', 'v1'],
-    ['block_filter_header', Y, 'json, data, text; block filters required', 'v1'],
-    ['address', Y, 'json; address index required', 'v1'],
-    ['address_confirmed', Y, 'json; address index required', 'v1'],
-    ['address_balance', Y, 'json; address index required', 'v1'],
-    ['address_subscribe', Y, 'json; address index required', 'v1'],
-    ['address_unconfirmed', N, 'v5 tx pool', 'v1']
-  ]
-},
-{
-  id: 'admin', name: 'Admin', versioned: true,
-  note: 'An isolated operations endpoint, with its own interface and credentials. Streams the node’s log and event telemetry live over websocket, rendered via an embedded html console. Console can be replaced with custom pages by configuration.',
-  spec: { Transport: 'http/s, ws/s', Framing: 'REST + ws', Auth: 'tls server, mutual; http basic (scoped)', Channel: 'full duplex (subscriptions)' },
-  methods: [
-    ['log_subscribe', Y, 'filtered live log stream (10 levels)', 'v1'],
-    ['event_subscribe', Y, 'filtered live event stream (27 event types)', 'v1']
-  ]
-},
-{
-  id: 'p2p', name: 'Peer-to-peer', versioned: true, configured: true, label: 'Message',
+  id: 'p2p', name: 'Bitcoin P2P', versioned: true, configured: true, label: 'Message',
   note: 'Bitcoin’s wire protocol. Outbound and manual connections may run over socks5 with proxy authentication, making peers through an anonymizer. Can be configured to run as a hidden service. Transaction pooling out of scope for version 4.',
   spec: { Transport: 'p2p/s, socks5', Framing: 'bitcoin p2p', Auth: 'not applicable', Channel: 'full duplex, version handshake' },
   methods: [
@@ -429,43 +429,8 @@ const services = [
   ]
 },
 {
-  id: 'btcd', name: 'btcd',
-  note: 'All methods in the bitcoind query interface are also served here. A tcp/s transport is supported on the same port. Native btcd implementation of bitcoind is not current or consistent, however this implementation is. Native btcd also does not support json-rpc 2.0 named parameters, which are required for compliance, however this implementation does.',
-  spec: { Transport: 'tcp/s, http/s, ws/s', Framing: 'json-rpc 2.0 (with named params)', Auth: 'tls server, mutual; http basic (scoped)', Channel: 'full duplex (notifications)' },
-  methods: [
-    ['authenticate', Y, ''],
-    ['session', Y, ''],
-    ['estimatefee', Y, 'block-based estimation'],
-    ['getbestblock', Y, ''],
-    ['getcfilter', Y, 'block filters required'],
-    ['getcfilterheader', Y, 'block filters required'],
-    ['getcurrentnet', Y, ''],
-    ['getheaders', Y, ''],
-    ['getinfo', Y, ''],
-    ['searchrawtransactions', Y, 'address index required'],
-    ['version', Y, ''],
-    ['notifyblocks', Y, ''],
-    ['stopnotifyblocks', Y, ''],
-    ['loadtxfilter', Y, 'address index required'],
-    ['rescanblocks', Y, 'address index required'],
-    ['rescan', Y, 'address index required'],
-    ['node', W, ''],
-    ['debuglevel', P, 'levels, read only'],
-    ['generate', N, 'v5 tx pool'],
-    ['getgenerate', N, 'v5 tx pool'],
-    ['gethashespersec', N, 'v5 tx pool'],
-    ['setgenerate', N, 'v5 tx pool'],
-    ['notifynewtransactions', N, 'v5 tx pool'],
-    ['stopnotifynewtransactions', N, 'v5 tx pool'],
-    ['notifyreceived', R, 'deprecated by btcd'],
-    ['stopnotifyreceived', R, 'deprecated by btcd'],
-    ['notifyspent', R, 'deprecated by btcd'],
-    ['stopnotifyspent', R, 'deprecated by btcd']
-  ]
-},
-{
-  id: 'bitcoind', name: 'bitcoind query', grouped: true,
-  note: 'Drop-in bitcoind compatibility for node methods. A tcp/s transport is supported on the same port.',
+  id: 'bitcoind', name: 'Bitcoind JSON-RPC', grouped: true,
+  note: 'Drop-in compatibility for JSON-RPC node methods. A tcp/s transport is supported on the same port.',
   spec: { Transport: 'tcp/s, http/s, ws/s', Framing: 'json-rpc 2.0 + REST', Auth: 'tls server, mutual; http basic (scoped)', Channel: 'half duplex' },
   methods: [
     // blockchain
@@ -578,11 +543,13 @@ const services = [
     ['(19 test methods)', X, 'test hooks', 'test'],
     // wallet
     ['(58 wallet methods)', X, 'no wallet', 'wallet']
-  ],
-  extraTitle: 'REST',
-  extraNote: '',
-  extraLabel: 'Endpoint',
-  extra: [
+  ]
+},
+{
+  id: 'rest', name: 'Bitcoind REST',
+  note: 'Drop-in bitcoind compatibility for the REST interface, served on JSON-RPC endpoint.',
+  spec: { Transport: 'zmtp/s', Framing: 'zeromq', Auth: 'curvecp server, mutual', Channel: 'full duplex (notifications)' },
+  methods: [
     ['block', Y, '', ''],
     ['block/notxdetails', Y, '', ''],
     ['blockhashbyheight', Y, '', ''],
@@ -601,8 +568,8 @@ const services = [
   ]
 },
 {
-  id: 'zeromq', name: 'bitcoind notify',
-  note: 'Drop-in bitcoind compatibility for the ZeroMQ interface.',
+  id: 'zeromq', name: 'Bitcoind ZMQ',
+  note: 'Drop-in compatibility for the ZeroMQ interface.',
   spec: { Transport: 'zmtp/s', Framing: 'zeromq', Auth: 'curvecp server, mutual', Channel: 'full duplex (notifications)' },
   methods: [
     ['hashblock', Y, ''],
@@ -610,6 +577,41 @@ const services = [
     ['rawblock', Y, ''],
     ['rawtx', Y, ''],
     ['sequence', Y, '']
+  ]
+},
+{
+  id: 'btcd', name: 'BTCD',
+  note: 'All methods in the bitcoind query interface are also served here. A tcp/s transport is supported on the same port. Native btcd implementation of bitcoind is not current or consistent, however this implementation is. Native btcd also does not support json-rpc 2.0 named parameters, which are required for compliance, however this implementation does.',
+  spec: { Transport: 'tcp/s, http/s, ws/s', Framing: 'json-rpc 2.0 (with named params)', Auth: 'tls server, mutual; http basic (scoped)', Channel: 'full duplex (notifications)' },
+  methods: [
+    ['authenticate', Y, ''],
+    ['session', Y, ''],
+    ['estimatefee', Y, 'block-based estimation'],
+    ['getbestblock', Y, ''],
+    ['getcfilter', Y, 'block filters required'],
+    ['getcfilterheader', Y, 'block filters required'],
+    ['getcurrentnet', Y, ''],
+    ['getheaders', Y, ''],
+    ['getinfo', Y, ''],
+    ['searchrawtransactions', Y, 'address index required'],
+    ['version', Y, ''],
+    ['notifyblocks', Y, ''],
+    ['stopnotifyblocks', Y, ''],
+    ['loadtxfilter', Y, 'address index required'],
+    ['rescanblocks', Y, 'address index required'],
+    ['rescan', Y, 'address index required'],
+    ['node', W, ''],
+    ['debuglevel', P, 'levels, read only'],
+    ['generate', N, 'v5 tx pool'],
+    ['getgenerate', N, 'v5 tx pool'],
+    ['gethashespersec', N, 'v5 tx pool'],
+    ['setgenerate', N, 'v5 tx pool'],
+    ['notifynewtransactions', N, 'v5 tx pool'],
+    ['stopnotifynewtransactions', N, 'v5 tx pool'],
+    ['notifyreceived', R, 'deprecated by btcd'],
+    ['stopnotifyreceived', R, 'deprecated by btcd'],
+    ['notifyspent', R, 'deprecated by btcd'],
+    ['stopnotifyspent', R, 'deprecated by btcd']
   ]
 },
 {
