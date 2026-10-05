@@ -1,0 +1,105 @@
+/* libbitcoin palette, shared with the landing page. */
+[data-md-color-scheme="slate"] {
+  color-scheme: dark;
+
+  --md-default-bg-color: #272822;
+  --md-default-bg-color--light: #2b2c26;
+  --md-default-bg-color--lighter: #2e302a;
+  --md-default-bg-color--lightest: #3a3c33;
+  --md-default-fg-color: #ededed;
+  --md-default-fg-color--light: #cfcfcf;
+  --md-default-fg-color--lighter: #6a7282;
+  --md-default-fg-color--lightest: #3a3c33;
+
+  --md-primary-fg-color: #1f211c;
+  --md-primary-fg-color--light: #2e302a;
+  --md-primary-fg-color--dark: #1a1c18;
+  --md-primary-bg-color: #ededed;
+  --md-primary-bg-color--light: #cfcfcf;
+
+  --md-accent-fg-color: #ffa022;
+  --md-accent-fg-color--transparent: rgba(255, 160, 34, .12);
+  --md-accent-bg-color: #272822;
+  --md-accent-bg-color--light: #272822;
+
+  --md-typeset-color: #ededed;
+  --md-typeset-a-color: #c85637;
+  --md-typeset-table-color: #3a3c33;
+  --md-typeset-table-color--light: #2e302a;
+
+  --md-code-bg-color: #1f211c;
+  --md-code-fg-color: #ededed;
+
+  --md-footer-bg-color: #1f211c;
+  --md-footer-bg-color--dark: #1a1c18;
+  --md-footer-fg-color: #cfcfcf;
+  --md-footer-fg-color--light: #6a7282;
+  --md-footer-fg-color--lighter: #3a3c33;
+
+  --md-text-font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --md-code-font: ui-monospace, "SF Mono", "Cascadia Mono", "Segoe UI Mono", Menlo, Consolas, monospace;
+}
+
+.md-header {
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+  box-shadow: none;
+}
+
+.md-tabs {
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+
+.md-tabs__link {
+  font-family: var(--md-code-font);
+  font-size: .7rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.md-typeset h1,
+.md-typeset h2 {
+  color: #ffa022;
+  font-family: var(--md-code-font);
+  font-weight: 600;
+  letter-spacing: -.02em;
+}
+
+.md-typeset h3,
+.md-typeset h4 {
+  color: #ededed;
+  font-family: var(--md-code-font);
+  font-weight: 600;
+}
+
+.md-typeset code {
+  border-radius: 2px;
+}
+
+.md-typeset .lb-verified {
+  color: var(--md-default-fg-color--lighter);
+  font-family: var(--md-code-font);
+  font-size: .6rem;
+  letter-spacing: .06em;
+  margin-top: 2.4em;
+}
+
+/* Status tags, shared with the landing page. */
+.md-typeset .tag {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 2px;
+  border: 1px solid currentColor;
+  font-family: var(--md-code-font);
+  font-size: .5rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+.md-typeset .tag.yes { color: #00bb7f; }
+.md-typeset .tag.partial { color: #ffa022; }
+.md-typeset .tag.pending { color: #4f8dff; }
+.md-typeset .tag.rejected { color: #ff2357; }
+.md-typeset .tag.scope { color: #6a7282; }
+.md-typeset .tag.wip { color: #c07bff; }
